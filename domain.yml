@@ -1,0 +1,167 @@
+version: "3.0"
+
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - bot_challenge
+  - ask_time
+  - ask_next_eclipse
+
+entities:
+  - city
+
+slots:
+  # Featurized slots for policies
+  low_entity_score:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+    - type: custom
+      action: action_set_low_entity_score
+  # Unfeaturized slots for forms
+  city:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: city
+  only_total_eclipse:
+    type: bool
+    influence_conversation: false
+    mappings:
+    - type: from_intent
+      intent: affirm
+      value: true
+      conditions:
+      - active_loop: solar_eclipse_form
+        requested_slot: only_total_eclipse
+    - type: from_intent
+      intent: deny
+      value: false
+      conditions:
+      - active_loop: solar_eclipse_form
+        requested_slot: only_total_eclipse
+  # Unfeaturized slots for NLG
+  current_time_with_tz:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+      action: action_set_current_time_with_tz
+  current_time_in_last_mentioned_tz:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+      action: action_set_current_time_in_last_mentioned_tz
+  current_time_of_day:
+    type: categorical
+    values:
+      - morning
+      - day
+      - evening
+      - night
+    influence_conversation: false
+    mappings:
+    - type: custom
+      action: action_set_current_time_of_day
+  num_times_bot_was_challenged:
+    type: any
+    influence_conversation: false
+    mappings:
+    - type: custom
+      action: action_set_num_times_bot_was_challenged
+  problematic_city_name:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+  next_solar_eclipse_date:
+    type: text
+    influence_conversation: false
+    initial_value: "in the far future"
+    mappings:
+    - type: custom
+
+forms:
+  solar_eclipse_form:
+    required_slots:
+      - city
+      - only_total_eclipse
+
+responses:
+  utter_greet:
+  - text: "Good morning!"
+    condition:
+      - type: slot
+        name: current_time_of_day
+        value: "morning"
+  - text: "Hello!"
+    condition:
+      - type: slot
+        name: current_time_of_day
+        value: "day"
+  - text: "Good evening!"
+    condition:
+      - type: slot
+        name: current_time_of_day
+        value: "evening"
+  - text: "Hey!"
+
+  utter_abilities:
+  - text: "I am Timebot and can tell you things about time."
+
+  utter_current_time:
+  - text: "It is {current_time_with_tz} right now."
+
+  utter_current_time_in_last_mentioned_tz:
+  - text: "Right now, it is {current_time_in_last_mentioned_tz}."
+
+  utter_goodbye:
+  - text: "Have a good time!"
+
+  utter_iamabot:
+  - text: "I am a bot, powered by Rasa."
+    condition:
+      - type: slot
+        name: num_times_bot_was_challenged
+        value: 1
+  - text: "As I've said, I am a bot, built with Rasa Open Source."
+    condition:
+      - type: slot
+        name: num_times_bot_was_challenged
+        value: 2
+  - text: "Why do you keep asking? I really am just a computer program."
+    condition:
+      - type: slot
+        name: num_times_bot_was_challenged
+        value: 3
+  - text: "You wouldn't believe me anyway. ¯\\_(ツ)_/¯"
+
+  utter_next_eclipse:
+  - text: "The next total solar eclipse, visible from {city}, will be {next_solar_eclipse_date}."
+    condition:
+      - type: slot
+        name: only_total_eclipse
+        value: true
+  - text: "The next solar eclipse, visible from {city}, will be {next_solar_eclipse_date}."
+    condition:
+      - type: slot
+        name: only_total_eclipse
+        value: false
+
+  utter_ask_city:
+  - text: What city are you in?
+
+  utter_ask_only_total_eclipse:
+  - text: Are you looking for a total eclipse only?
+
+  utter_unclear_entity_city:
+  - text: "Sorry, I didn't get that. I guess '{problematic_city_name}' is the name of a city?"
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

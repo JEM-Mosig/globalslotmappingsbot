@@ -1,0 +1,6 @@
+.rasa
+.pytest_cache
+**/__pycache__
+models
+story_graph.dot
+**/*.bak

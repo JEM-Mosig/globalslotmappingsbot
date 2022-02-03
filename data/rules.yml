@@ -1,0 +1,115 @@
+version: "3.0"
+
+rules:
+
+- rule: Greet
+  conversation_start: true
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - action: utter_abilities
+
+- rule: Say goodbye anytime the user says goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+- rule: Say 'I am a bot' anytime the user challenges
+  steps:
+  - intent: bot_challenge
+  - action: utter_iamabot
+
+- rule: Tell current time
+  steps:
+  - intent: ask_time
+  - action: utter_current_time
+
+- rule: Tell current time in city
+  steps:
+  - intent: ask_time
+    entities:
+    - city
+  - action: utter_current_time_in_last_mentioned_tz
+
+- rule: Verify low-confidence city entity
+  steps:
+  - intent: ask_time
+    entities:
+    - city
+  - slot_was_set:
+    - low_entity_score: true
+  - action: utter_unclear_entity_city
+
+- rule: Start eclipse form
+  steps:
+  - intent: ask_next_eclipse
+  - action: solar_eclipse_form
+  - active_loop: solar_eclipse_form
+
+- rule: Submit eclipse form
+  condition:
+  - active_loop: solar_eclipse_form
+  steps:
+  - action: solar_eclipse_form
+  - active_loop: null
+  - slot_was_set:
+    - requested_slot: null
+  - action: utter_next_eclipse
+
+# - rule: Low entity confidence in eclipse form
+#   condition:
+#   - active_loop: solar_eclipse_form
+#   steps:
+#   - or:
+#     - intent: greet
+#       entities:
+#       - city
+#     - intent: goodbye
+#       entities:
+#       - city
+#     - intent: affirm
+#       entities:
+#       - city
+#     - intent: deny
+#       entities:
+#       - city
+#     - intent: bot_challenge
+#       entities:
+#       - city
+#     - intent: ask_time
+#       entities:
+#       - city
+#     - intent: ask_next_eclipse
+#       entities:
+#       - city
+#   - slot_was_set:
+#     - low_entity_score: true
+#   - action: utter_unclear_entity_city
+#   - action: solar_eclipse_form
+#   - active_loop: solar_eclipse_form
+
+- rule: Low entity confidence in eclipse form
+  condition:
+  - active_loop: solar_eclipse_form
+  steps:
+  - action: solar_eclipse_form
+  - active_loop: solar_eclipse_form
+  - slot_was_set:
+    - requested_slot: city
+  - intent: ask_time
+    entities:
+    - city: ondon
+  - slot_was_set:
+    - low_entity_score: true
+  - slot_was_set:
+    - problematic_city_name: ondon
+  - slot_was_set:
+    - city: ondon
+  - slot_was_set:
+    - current_time_with_tz: 12:39:45 (CET)
+  - slot_was_set:
+    - current_time_in_last_mentioned_tz: 12:39:45 (CET)
+  - action: utter_unclear_entity_city
+  - action: solar_eclipse_form
+  - slot_was_set:
+    - requested_slot: only_total_eclipse
