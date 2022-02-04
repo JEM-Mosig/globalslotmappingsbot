@@ -49,18 +49,17 @@ nlu:
     - no way
     - not really
 
-- intent: ask_time
+- intent: request_human
   examples: |
-    - what time is it?
-    - what's the time?
-    - how late is it?
-    - what is the time now?
-    - what's the time in [Berlin](city)?
-    - what's the time in [London](city)?
-    - what's the time in [Madrid](city)?
-    - what's the time in [Prague](city)?
-    - what's the time in [Rome](city)?
-    - what is it now?
+    - can I talk to a human, please?
+    - let me talk to a human
+    - let me talk to your creator
+    - I want to speak with your supervisor
+    - get me a real human
+    - get me a human on the line
+    - I need to chat with a human
+    - can you put me in touch with a human?
+    - i want to talk to a person
 
 - intent: bot_challenge
   examples: |
@@ -68,12 +67,3 @@ nlu:
     - are you a human?
     - am I talking to a bot?
     - am I talking to a human?
-
-- intent: ask_next_eclipse
-  examples: |
-    - when is the next solar eclipse?
-    - when is the next eclipse?
-    - the next eclipse is when?
-    - when can we see the next solar eclipse?
-    - when will the moon hide the sun again?
-    - next eclipse
