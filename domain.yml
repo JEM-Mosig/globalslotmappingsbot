@@ -7,37 +7,53 @@ intents:
   - deny
   - bot_challenge
   - request_human
+  - inform
 
 entities:
   - item
   - location
 
 slots:
+  dummy:
+    type: any
+    mappings:
+    - type: custom
+      action: global_slot_mapping
   # Featurized slots for policies
   office_open:
     type: bool
     influence_conversation: true
     mappings:
     - type: custom
-      action: action_set_office_open
-  # low_entity_score:
-  #   type: bool
-  #   influence_conversation: true
-  #   initial_value: false
-  #   mappings:
-  #   - type: custom
+  low_entity_score:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+    - type: custom
   # Unfeaturized slots for forms
-  # lost_item_type:
-  #   type: text
-  #   influence_conversation: false
-  #   mappings:
-  #   - type: custom
+  lost_item_type:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+  last_known_item_location:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
   # Unfeaturized slots for NLG
+  unclear_entity_value:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
 
 forms:
   main_form:
     required_slots:
       - lost_item_type
+      - last_known_item_location
 
 responses:
   utter_greet:
@@ -75,6 +91,15 @@ responses:
 
   utter_ask_lost_item_type:
   - text: What kind of item did you lose?
+
+  utter_ask_last_known_item_location:
+  - text: Where did you last see your item?
+
+  utter_submit:
+  - text: You are looking for '{lost_item_type}', last seen at '{last_known_item_location}'
+
+  utter_entity_unclear:
+  - text: I'm not sure what you mean by '{unclear_entity_value}'.
 
 session_config:
   session_expiration_time: 60

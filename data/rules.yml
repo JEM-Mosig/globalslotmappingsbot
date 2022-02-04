@@ -32,3 +32,30 @@ rules:
   - slot_was_set:
     - office_open: false
   - action: utter_office_hours
+
+- rule: Start main form
+  steps:
+  - intent: inform
+  - action: main_form
+  - active_loop: main_form
+
+- rule: Submit main form
+  condition:
+  - active_loop: main_form
+  steps:
+  - action: main_form
+  - active_loop: null
+  - slot_was_set:
+    - requested_slot: null
+  - action: utter_submit
+
+- rule: Handle low entity score in main form
+  condition:
+  - active_loop: main_form
+  steps:
+  - intent: inform
+  - slot_was_set:
+    - low_entity_score: true
+  - action: utter_entity_unclear
+  - action: main_form
+  - active_loop: main_form

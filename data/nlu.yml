@@ -67,3 +67,18 @@ nlu:
     - are you a human?
     - am I talking to a bot?
     - am I talking to a human?
+
+- intent: inform
+  examples: |
+    - i lost my [umbrella](item) on the [train](location)
+    - i lost my [sunglases](item) on the [street](location)
+    - i lost my [backpack](item)
+    - my [umbrella](item) got lost
+    - i cannot find my [sunglasses](item)
+    - on the [train](location)
+    - on the [street](location)
+    - my [backpack](item)
+    - my [sunglasses](item)
+    - [backpack](item)
+    - [train](location)
+  

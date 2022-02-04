@@ -21,10 +21,23 @@ import random
 LOCAL_TIMEZONE = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
 
 
-class ActionSetOfficeOpen(Action):
+def get_entity_data(
+    message: Dict[Text, Any]
+) -> List[Tuple[Text, Any, float]]:
+    return [
+        (
+            entity.get("entity", 1.0),
+            entity.get("value", 1.0),
+            entity.get("confidence_entity", 1.0),
+        )
+        for entity in message.get("entities", {})
+    ]
+
+
+class GlobalSlotMapping(Action):
 
     def name(self) -> Text:
-        return "action_set_office_open"
+        return "global_slot_mapping"
 
     def run(
         self,
@@ -32,10 +45,28 @@ class ActionSetOfficeOpen(Action):
         tracker: Tracker,
         domain: Dict[Text, Any]
     ) -> List[Dict[Text, Any]]:
-        office_open = random.choice([True, False])
-        print(f"office_open = {office_open}")
+        new_slot_values: Dict[Text, Any] = dict()
+
+        # Office hours
+        new_slot_values["office_open"] = random.choice([True, False])
+
+        # Entity mapping and low entity score handling
+        low_entity_score: bool = False
+        for entity_type, value, score in get_entity_data(tracker.latest_message):
+            print(f"{entity_type}: {value} ({score})")
+            if score < 0.98:
+                low_entity_score = True
+                new_slot_values["unclear_entity_value"] = value
+            else:
+                if entity_type == "item":
+                    new_slot_values["lost_item_type"] = value
+                elif entity_type == "location":
+                    new_slot_values["last_known_item_location"] = value
+        new_slot_values["low_entity_score"] = low_entity_score
+
         return [
-            SlotSet("office_open", office_open)
+            SlotSet(name, value)
+            for name, value in new_slot_values.items()
         ]
 
 
@@ -151,17 +182,7 @@ class ActionSetOfficeOpen(Action):
 #         ]
 
 
-# def get_entity_data(
-#     message: Dict[Text, Any]
-# ) -> List[Tuple[Text, Any, float]]:
-#     return [
-#         (
-#             entity.get("entity", 1.0),
-#             entity.get("value", 1.0),
-#             entity.get("confidence_entity", 1.0),
-#         )
-#         for entity in message.get("entities", {})
-#     ]
+
 
 
 # class ActionSetLowEntityScore(Action):
