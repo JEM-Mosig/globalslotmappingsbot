@@ -61,6 +61,25 @@ nlu:
     - can you put me in touch with a human?
     - i want to talk to a person
 
+- intent: ask_what_can_do
+  examples: |
+    - what can you do?
+    - what abilities do you have?
+    - can you do X?
+    - can you make me coffee?
+    - can you tell a joke?
+    - tell me all the things you can help me with
+    - tell me what you can do
+    - what sort of things can you help with?
+
+- intent: tell_me_more
+  examples: |
+    - why?
+    - can you tell me more?
+    - tell me more
+    - what else?
+    - what's that?
+
 - intent: bot_challenge
   examples: |
     - are you a bot?
@@ -81,4 +100,3 @@ nlu:
     - my [sunglasses](item)
     - [backpack](item)
     - [train](location)
-  

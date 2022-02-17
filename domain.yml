@@ -7,6 +7,8 @@ intents:
   - deny
   - bot_challenge
   - request_human
+  - ask_what_can_do
+  - tell_me_more
   - inform
 
 entities:
@@ -48,6 +50,11 @@ slots:
     influence_conversation: false
     mappings:
     - type: custom
+  num_utter_abilities:
+    type: any
+    influence_conversation: false
+    mappings:
+    - type: custom
 
 forms:
   main_form:
@@ -61,27 +68,27 @@ responses:
 
   utter_abilities:
   - text: "I am Lost & Found Bot and can help you find things."
+    condition:
+      - type: slot
+        name: num_utter_abilities
+        value: 0
+  - text: "I can help you find things that you've lost either on a train or some other place in town."
+    condition:
+      - type: slot
+        name: num_utter_abilities
+        value: 1
+  - text: "Actually, I'm just a demo, so don't expect me to really find something."
+    condition:
+      - type: slot
+        name: num_utter_abilities
+        value: 2
+  - text: "I can't do anything beyond what I already mentioned, sorry."
 
   utter_goodbye:
   - text: "Goodbye"
 
   utter_iamabot:
-  # - text: "I am a bot, powered by Rasa."
-  #   condition:
-  #     - type: slot
-  #       name: num_times_bot_was_challenged
-  #       value: 1
-  # - text: "As I've said, I am a bot, built with Rasa Open Source."
-  #   condition:
-  #     - type: slot
-  #       name: num_times_bot_was_challenged
-  #       value: 2
-  # - text: "Why do you keep asking? I really am just a computer program."
-  #   condition:
-  #     - type: slot
-  #       name: num_times_bot_was_challenged
-  #       value: 3
-  - text: "You wouldn't believe me anyway. ¯\\_(ツ)_/¯"
+  - text: "I am a bot, powered by Rasa."
 
   utter_office_hours:
   - text: Sorry, it's outside of office hours right now.

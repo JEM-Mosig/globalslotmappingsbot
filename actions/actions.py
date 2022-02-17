@@ -34,6 +34,13 @@ def get_entity_data(
     ]
 
 
+def event_is_action(event: Dict[Text, Any], action_name: Text) -> bool:
+    return (
+        event.get("event", "") == "bot" and
+        event.get("metadata", {}).get("utter_action", "") == action_name
+    )
+
+
 class GlobalSlotMapping(Action):
 
     def name(self) -> Text:
@@ -63,6 +70,13 @@ class GlobalSlotMapping(Action):
                 elif entity_type == "location":
                     new_slot_values["last_known_item_location"] = value
         new_slot_values["low_entity_score"] = low_entity_score
+
+        # Count how often the bot executed `utter_abilities`
+        num_utter_abilities = 0
+        for event in tracker.applied_events():
+            if event_is_action(event, "utter_abilities"):
+                num_utter_abilities += 1
+        new_slot_values["num_utter_abilities"] = num_utter_abilities
 
         return [
             SlotSet(name, value)
